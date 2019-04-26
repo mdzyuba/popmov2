@@ -12,15 +12,14 @@ import androidx.annotation.Nullable;
 public class Movie implements Parcelable {
 
     private static final String TAG = Movie.class.getSimpleName();
-    private static final int UNDEFINED_VALUE = -1;
 
+    private final Integer id;
     private final String title;
     private final String posterPath;
     private final Boolean adult;
     private final String overview;
     private final Date releaseDate;
     private final Integer[] genreIDs;
-    private final Integer id;
     private final String originalTitle;
     private final String originalLanguage;
     private final String backdropPath;
@@ -29,17 +28,17 @@ public class Movie implements Parcelable {
     private final Boolean video;
     private final Float voteAverage;
 
-    private Movie(String title, String posterPath, Boolean adult, String overview, Date releaseDate,
-                  Integer[] genreIDs, Integer id, String originalTitle, String originalLanguage,
+    private Movie(Integer id, String title, String posterPath, Boolean adult, String overview, Date releaseDate,
+                  Integer[] genreIDs, String originalTitle, String originalLanguage,
                   String backdropPath, Integer popularity, Integer voteCount, Boolean video,
                   Float voteAverage) {
+        this.id = id;
         this.title = title;
         this.posterPath = posterPath;
         this.adult = adult;
         this.overview = overview;
         this.releaseDate = releaseDate;
         this.genreIDs = genreIDs;
-        this.id = id;
         this.originalTitle = originalTitle;
         this.originalLanguage = originalLanguage;
         this.backdropPath = backdropPath;
@@ -135,6 +134,11 @@ public class Movie implements Parcelable {
         private Boolean video;
         private Float voteAverage;
 
+        public Builder withId(Integer id) {
+            this.id = id;
+            return this;
+        }
+
         public Builder withTitle(String title) {
             this.title = title;
             return this;
@@ -161,63 +165,11 @@ public class Movie implements Parcelable {
         }
 
         public Movie build() {
-            return new Movie(title, posterPath, adult, overview, releaseDate, genreIDs, id,
+            return new Movie(id, title, posterPath, adult, overview, releaseDate, genreIDs,
                              originalTitle, originalLanguage, backdropPath, popularity,
                              voteCount, video, voteAverage);
         }
     }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(title);
-        dest.writeString(posterPath);
-        dest.writeString(overview);
-        if (releaseDate != null) {
-            dest.writeLong(releaseDate.getTime());
-        } else {
-            dest.writeLong(UNDEFINED_VALUE);
-        }
-        if (voteAverage != null) {
-            dest.writeFloat(voteAverage);
-        } else {
-            dest.writeFloat(UNDEFINED_VALUE);
-        }
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
-        @Override
-        public Movie createFromParcel(Parcel source) {
-            String title = source.readString();
-            String posterPath = source.readString();
-            String overview = source.readString();
-            long releaseDateMs = source.readLong();
-            float voteAverage = source.readFloat();
-
-            Movie.Builder movieBuilder = new Movie.Builder();
-            movieBuilder.withTitle(title);
-            movieBuilder.withPosterPath(posterPath);
-            movieBuilder.withOverview(overview);
-            if (releaseDateMs != UNDEFINED_VALUE) {
-                Date date = new Date();
-                date.setTime(releaseDateMs);
-                movieBuilder.withReleaseDate(date);
-            }
-            if (Float.compare(voteAverage, UNDEFINED_VALUE) != 0) {
-                movieBuilder.withVoteAverage(voteAverage);
-            }
-            return movieBuilder.build();
-        }
-
-        @Override
-        public Movie[] newArray(int size) {
-            return new Movie[size];
-        }
-    };
 
     @Override
     public String toString() {
@@ -235,10 +187,11 @@ public class Movie implements Parcelable {
         if (this == o) return true;
         if (!(o instanceof Movie)) return false;
         Movie movie = (Movie) o;
-        return Objects.equals(title, movie.title) && Objects.equals(posterPath, movie.posterPath) &&
-               Objects.equals(adult, movie.adult) && Objects.equals(overview, movie.overview) &&
+        return Objects.equals(id, movie.id) && Objects.equals(title, movie.title) &&
+               Objects.equals(posterPath, movie.posterPath) && Objects.equals(adult, movie.adult) &&
+               Objects.equals(overview, movie.overview) &&
                Objects.equals(releaseDate, movie.releaseDate) &&
-               Arrays.equals(genreIDs, movie.genreIDs) && Objects.equals(id, movie.id) &&
+               Arrays.equals(genreIDs, movie.genreIDs) &&
                Objects.equals(originalTitle, movie.originalTitle) &&
                Objects.equals(originalLanguage, movie.originalLanguage) &&
                Objects.equals(backdropPath, movie.backdropPath) &&
@@ -250,10 +203,63 @@ public class Movie implements Parcelable {
     @Override
     public int hashCode() {
         int result =
-                Objects.hash(title, posterPath, adult, overview, releaseDate, id, originalTitle,
+                Objects.hash(id, title, posterPath, adult, overview, releaseDate, originalTitle,
                              originalLanguage, backdropPath, popularity, voteCount, video,
                              voteAverage);
         result = 31 * result + Arrays.hashCode(genreIDs);
         return result;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.posterPath);
+        dest.writeValue(this.adult);
+        dest.writeString(this.overview);
+        dest.writeLong(this.releaseDate != null ? this.releaseDate.getTime() : -1);
+        dest.writeArray(this.genreIDs);
+        dest.writeString(this.originalTitle);
+        dest.writeString(this.originalLanguage);
+        dest.writeString(this.backdropPath);
+        dest.writeValue(this.popularity);
+        dest.writeValue(this.voteCount);
+        dest.writeValue(this.video);
+        dest.writeValue(this.voteAverage);
+    }
+
+    protected Movie(Parcel in) {
+        this.id = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.title = in.readString();
+        this.posterPath = in.readString();
+        this.adult = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.overview = in.readString();
+        long tmpReleaseDate = in.readLong();
+        this.releaseDate = tmpReleaseDate == -1 ? null : new Date(tmpReleaseDate);
+        this.genreIDs = (Integer[]) in.readArray(Integer[].class.getClassLoader());
+        this.originalTitle = in.readString();
+        this.originalLanguage = in.readString();
+        this.backdropPath = in.readString();
+        this.popularity = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.voteCount = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.video = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.voteAverage = (Float) in.readValue(Float.class.getClassLoader());
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel source) {
+            return new Movie(source);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }

@@ -35,6 +35,7 @@ public class MovieParserTest {
         resourceUtils.assertMoviesParsed(movieCollection.getMovieList());
 
         Movie movie = movieCollection.getMovieList().get(0);
+        assertEquals(SampleMovie.ID, movie.getId());
         assertEquals(SampleMovie.TITLE, movie.getTitle());
         assertEquals(SampleMovie.POSTER_PATH, movie.getPosterPath());
         assertEquals(SampleMovie.OVERVIEW, movie.getOverview());

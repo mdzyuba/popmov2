@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
  * Provides data for the first Movie item in the src/test/resources/popular_movies_response.json
  */
 public class SampleMovie {
+    public static final Integer ID = 399579;
     public static final String TITLE = "Alita: Battle Angel";
     public static final String POSTER_PATH = "/xRWht48C2V8XNfzvPehyClOvDni.jpg";
     public static final String OVERVIEW =

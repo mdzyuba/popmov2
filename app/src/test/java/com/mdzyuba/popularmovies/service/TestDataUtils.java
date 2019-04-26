@@ -1,6 +1,8 @@
 package com.mdzyuba.popularmovies.service;
 
 import com.mdzyuba.popularmovies.model.Movie;
+import com.mdzyuba.popularmovies.model.Video;
+import com.mdzyuba.popularmovies.model.VideosCollection;
 
 import org.hamcrest.Matchers;
 
@@ -12,6 +14,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -19,6 +22,8 @@ class TestDataUtils {
 
     private static final String POPULAR_MOVIES_RESPONSE_JSON =
             "popular_movies_response.json";
+
+    private static final String MOVIE_VIDEOS = "movie_videos.json";
     private static final String DELIMITER = "\\A";
 
     private static final String[] POSTER_PATH_ITEMS = {"/xRWht48C2V8XNfzvPehyClOvDni.jpg",
@@ -35,12 +40,22 @@ class TestDataUtils {
 
     @Nullable
     public String readPopularMoviesJsonResponse() throws IOException {
+        return getJsonString(POPULAR_MOVIES_RESPONSE_JSON);
+    }
+
+    @Nullable
+    public String readMovieVideosJsonResponse() throws IOException {
+        return getJsonString(MOVIE_VIDEOS);
+    }
+
+    @Nullable
+    private String getJsonString(String fileName) throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
         if (classLoader == null) {
             return null;
         }
         try (InputStream inputStream =
-                     classLoader.getResourceAsStream(POPULAR_MOVIES_RESPONSE_JSON)) {
+                     classLoader.getResourceAsStream(fileName)) {
             if (inputStream == null) {
                 return null;
             }
@@ -62,4 +77,21 @@ class TestDataUtils {
                    Matchers.containsInAnyOrder(POSTER_PATH_ITEMS));
     }
 
+    public static void assertSampleVideoCollection(VideosCollection videosCollection) {
+        assertNotNull(videosCollection);
+        assertEquals(399579L, (long) videosCollection.getId());
+
+        List<Video> videoList = videosCollection.getVideos();
+        assertEquals(15, videoList.size());
+
+        Video video = videoList.get(0);
+        assertEquals("5a37e67d0e0a264cd01ede50", video.id);
+        assertEquals("en", video.iso_639_1);
+        assertEquals("US", video.iso_3166_1);
+        assertEquals("QvHv-99VfcU", video.key);
+        assertEquals("Behind the Scenes with James Cameron and Robert Rodriguez", video.name);
+        assertEquals("YouTube", video.site);
+        assertEquals(1080, video.size);
+        assertEquals("Featurette", video.type);
+    }
 }

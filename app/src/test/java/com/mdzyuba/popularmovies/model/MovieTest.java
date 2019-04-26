@@ -22,6 +22,7 @@ public class MovieTest {
     @Test
     public void writeToParcel_allFields_movieCreated() {
         Movie.Builder movieBuilder = new Movie.Builder()
+                .withId(SampleMovie.ID)
                 .withTitle(SampleMovie.TITLE)
                 .withPosterPath(SampleMovie.POSTER_PATH)
                 .withOverview(SampleMovie.OVERVIEW)
@@ -29,6 +30,7 @@ public class MovieTest {
                 .withVoteAverage(SampleMovie.VOTE_AVERAGE);
         Movie movie = movieBuilder.build();
         assertMovieCreated(movie);
+        assertEquals(SampleMovie.ID, movie.getId());
     }
 
     private void assertMovieCreated(Movie movie) {

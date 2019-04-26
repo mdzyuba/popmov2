@@ -25,6 +25,7 @@ class MovieParser {
     private static final String TAG = MovieParser.class.getSimpleName();
     private static final String RESULTS = "results";
     private static final String POSTER_PATH = "poster_path";
+    private static final String ID = "id";
     private static final String TITLE = "title";
     private static final String OVERVIEW = "overview";
     private static final String RELEASE_DATE = "release_date";
@@ -74,6 +75,7 @@ class MovieParser {
         }
 
         Movie.Builder movieBuilder = new Movie.Builder();
+        Integer id = jsonMovie.optInt(ID);
         String title = jsonMovie.optString(TITLE);
         String posterPath = jsonMovie.optString(POSTER_PATH);
         String overview = jsonMovie.optString(OVERVIEW);
@@ -81,6 +83,7 @@ class MovieParser {
         String voteAverage = jsonMovie.optString(VOTE_AVERAGE);
 
         movieBuilder
+                .withId(id)
                 .withTitle(title)
                 .withPosterPath(posterPath)
                 .withOverview(overview);

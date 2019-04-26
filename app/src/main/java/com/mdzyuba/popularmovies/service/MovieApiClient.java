@@ -30,6 +30,7 @@ public class MovieApiClient {
     // For most phones we recommend using “w185”.
     private static final String IMAGE_SIZE = "w185";
     private static final String IMAGE_PATH_SEPARATOR = "/";
+    private static final String VIDEOS = "videos";
 
     @NonNull
     public URL buildGetPopularMoviesUrl(int page) {
@@ -39,6 +40,19 @@ public class MovieApiClient {
     @NonNull
     public URL buildGetTopRatedMoviesUrl(int page) {
         return buildGerMovieUrl(TOP_RATED, page);
+    }
+
+    @NonNull
+    public URL buildGetVideosUrl(int movieId) throws MalformedURLException {
+        Uri uri = Uri.parse(THEMOVIEDB_ORG).buildUpon()
+                     .appendPath(API_VERSION)
+                     .appendPath(MOVIE)
+                     .appendPath(String.valueOf(movieId))
+                     .appendPath(VIDEOS)
+                     .appendQueryParameter(API_KEY, BuildConfig.MOVIEDB_KEY)
+                     .appendQueryParameter(LANGUAGE, EN_US)
+                     .build();
+        return new URL(uri.toString());
     }
 
     @NonNull
