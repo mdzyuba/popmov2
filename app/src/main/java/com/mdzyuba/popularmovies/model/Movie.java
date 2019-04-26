@@ -28,6 +28,8 @@ public class Movie implements Parcelable {
     private final Boolean video;
     private final Float voteAverage;
 
+    private VideosCollection videosCollection;
+
     private Movie(Integer id, String title, String posterPath, Boolean adult, String overview, Date releaseDate,
                   Integer[] genreIDs, String originalTitle, String originalLanguage,
                   String backdropPath, Integer popularity, Integer voteCount, Boolean video,
@@ -116,6 +118,14 @@ public class Movie implements Parcelable {
     @Nullable
     public Float getVoteAverage() {
         return voteAverage;
+    }
+
+    public VideosCollection getVideosCollection() {
+        return videosCollection;
+    }
+
+    public void setVideosCollection(VideosCollection videosCollection) {
+        this.videosCollection = videosCollection;
     }
 
     public static class Builder {

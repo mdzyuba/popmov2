@@ -3,32 +3,48 @@ package com.mdzyuba.popularmovies;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import androidx.appcompat.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mdzyuba.popularmovies.model.Movie;
+import com.mdzyuba.popularmovies.model.Video;
+import com.mdzyuba.popularmovies.model.VideosCollection;
 import com.mdzyuba.popularmovies.view.ImageUtil;
+import com.mdzyuba.popularmovies.view.MovieDetailsViewModel;
 import com.mdzyuba.popularmovies.view.PicassoProvider;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.Date;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 /**
  * Displays a Movie details.
  */
 public class MovieDetailsActivity extends AppCompatActivity {
-
+    private static final String TAG = MovieDetailsActivity.class.getSimpleName();
     private static final String KEY_MOVIE = "MOVIE";
+    private static final String YOUTUBE = "https://www.youtube.com/watch?v=%s";
     private Movie movie;
     private Picasso picasso;
+    private MovieDetailsViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
+        viewModel = ViewModelProviders.of(this).get(MovieDetailsViewModel.class);
 
         if (movie == null) {
             Intent intent = getIntent();
@@ -41,10 +57,52 @@ public class MovieDetailsActivity extends AppCompatActivity {
             picasso = PicassoProvider.getPicasso(this.getApplicationContext());
         }
 
+        viewModel.videosCollection.observe(this, new Observer<VideosCollection>() {
+            @Override
+            public void onChanged(VideosCollection videosCollection) {
+                Log.d(TAG, "videos are ready: " + videosCollection);
+                initTrailers(videosCollection);
+            }
+        });
+
         if (movie != null) {
             initView();
+            viewModel.loadVideos(movie);
         }
     }
+
+    private void initTrailers(VideosCollection videosCollection) {
+        LayoutInflater layoutInflater = LayoutInflater.from(MovieDetailsActivity.this);
+        ViewGroup trailersView = findViewById(R.id.trailers);
+        int i = 1;
+        for (Video video: videosCollection.getVideos()) {
+            View trailerView = layoutInflater.inflate(R.layout.trailer, trailersView, false);
+            View.OnClickListener clickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Video trailer = (Video) view.getTag();
+                    Uri uri = Uri.parse(String.format(YOUTUBE, trailer.key));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    MovieDetailsActivity.this.startActivity(intent);
+                }
+            };
+
+            TextView text = trailerView.findViewById(R.id.text);
+            if (!TextUtils.isEmpty(video.name)) {
+                text.setText(video.name);
+            } else {
+                text.setText(getString(R.string.trailer, String.valueOf(i++)));
+            }
+            text.setTag(video);
+            text.setOnClickListener(clickListener);
+
+            Button playButton = trailerView.findViewById(R.id.play);
+            playButton.setTag(video);
+            playButton.setOnClickListener(clickListener);
+            trailersView.addView(trailerView);
+        }
+    }
+
 
     @SuppressLint("DefaultLocale")
     private void initView() {

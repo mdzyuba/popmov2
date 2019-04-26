@@ -14,4 +14,6 @@
     <string name="error_loading_movies_message">Failed to retrieve movies from TheMovieDB.org.\nPlease check the network connection and try again later.</string>
     <string name="try_again">Try again</string>
     <string name="movie_detail_activity">Movie Details</string>
+    <string name="trailers">Trailers:</string>
+    <string name="trailer">Trailer %1$s</string>
 </resources>
