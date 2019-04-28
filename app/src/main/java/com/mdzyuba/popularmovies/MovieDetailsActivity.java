@@ -70,6 +70,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             @Override
             public void onChanged(Reviews reviews) {
                 Log.d(TAG, "reviews are ready: " + reviews);
+                initReviews(reviews);
             }
         });
 
@@ -109,6 +110,21 @@ public class MovieDetailsActivity extends AppCompatActivity {
             playButton.setTag(video);
             playButton.setOnClickListener(clickListener);
             trailersView.addView(trailerView);
+        }
+    }
+
+    private void initReviews(Reviews reviews) {
+        LayoutInflater layoutInflater = LayoutInflater.from(MovieDetailsActivity.this);
+        ViewGroup reviewsContainer = findViewById(R.id.reviews);
+        for (Reviews.Review review: reviews.results) {
+            View reviewView = layoutInflater.inflate(R.layout.review_item, reviewsContainer, false);
+
+            TextView authorTv = reviewView.findViewById(R.id.tv_author);
+            authorTv.setText(review.author);
+            TextView contentView = reviewView.findViewById(R.id.tv_content);
+            contentView.setText(review.content);
+
+            reviewsContainer.addView(reviewView);
         }
     }
 
