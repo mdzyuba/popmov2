@@ -4,8 +4,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.mdzyuba.popularmovies.model.Movie;
+import com.mdzyuba.popularmovies.model.Reviews;
 import com.mdzyuba.popularmovies.model.VideosCollection;
 import com.mdzyuba.popularmovies.service.NetworkDataProvider;
+import com.mdzyuba.popularmovies.service.ReviewsProvider;
 import com.mdzyuba.popularmovies.service.VideoCollectionProvider;
 
 import androidx.lifecycle.MutableLiveData;
@@ -17,11 +19,14 @@ public class MovieDetailsViewModel extends ViewModel {
 
     public final MutableLiveData<VideosCollection> videosCollection;
 
+    public final MutableLiveData<Reviews> reviews;
+
     private final NetworkDataProvider networkDataProvider;
 
     public MovieDetailsViewModel() {
         this.networkDataProvider = new NetworkDataProvider();
         this.videosCollection = new MutableLiveData<>();
+        this.reviews = new MutableLiveData<>();
     }
 
     public void loadVideos(final Movie movie) {
@@ -42,6 +47,29 @@ public class MovieDetailsViewModel extends ViewModel {
             @Override
             protected void onPostExecute(VideosCollection videos) {
                 videosCollection.setValue(videos);
+            }
+        };
+        task.execute(movie);
+    }
+
+    public void loadReviews(final Movie movie) {
+        AsyncTask<Movie, Void, Reviews> task = new AsyncTask<Movie, Void, Reviews>() {
+            @Override
+            protected Reviews doInBackground(Movie... movies) {
+                Movie mv = movies[0];
+                ReviewsProvider provider = new ReviewsProvider(networkDataProvider);
+                try {
+                    Reviews reviews = provider.getReviews(mv.getId(), 1);
+                    return reviews;
+                } catch (Exception e) {
+                    Log.e(TAG, "Error: " + e.getMessage(), e);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Reviews revs) {
+                reviews.setValue(revs);
             }
         };
         task.execute(movie);

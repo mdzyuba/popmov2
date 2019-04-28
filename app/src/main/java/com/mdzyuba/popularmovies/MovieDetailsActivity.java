@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mdzyuba.popularmovies.model.Movie;
+import com.mdzyuba.popularmovies.model.Reviews;
 import com.mdzyuba.popularmovies.model.Video;
 import com.mdzyuba.popularmovies.model.VideosCollection;
 import com.mdzyuba.popularmovies.view.ImageUtil;
@@ -65,9 +66,17 @@ public class MovieDetailsActivity extends AppCompatActivity {
             }
         });
 
+        viewModel.reviews.observe(this, new Observer<Reviews>() {
+            @Override
+            public void onChanged(Reviews reviews) {
+                Log.d(TAG, "reviews are ready: " + reviews);
+            }
+        });
+
         if (movie != null) {
             initView();
             viewModel.loadVideos(movie);
+            viewModel.loadReviews(movie);
         }
     }
 
