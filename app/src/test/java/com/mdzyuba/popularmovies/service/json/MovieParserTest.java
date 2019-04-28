@@ -1,8 +1,10 @@
-package com.mdzyuba.popularmovies.service;
+package com.mdzyuba.popularmovies.service.json;
 
 import com.mdzyuba.popularmovies.model.Movie;
 import com.mdzyuba.popularmovies.model.MovieCollection;
 import com.mdzyuba.popularmovies.model.SampleMovie;
+import com.mdzyuba.popularmovies.service.TestDataUtils;
+import com.mdzyuba.popularmovies.service.json.MovieParser;
 
 import org.junit.Before;
 import org.junit.Test;

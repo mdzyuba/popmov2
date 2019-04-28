@@ -1,4 +1,4 @@
-package com.mdzyuba.popularmovies.service;
+package com.mdzyuba.popularmovies.service.json;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-class MovieParser {
+public class MovieParser {
 
     private static final String TAG = MovieParser.class.getSimpleName();
     private static final String RESULTS = "results";

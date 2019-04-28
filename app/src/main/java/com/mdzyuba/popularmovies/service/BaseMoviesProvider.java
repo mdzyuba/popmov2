@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.mdzyuba.popularmovies.model.Movie;
 import com.mdzyuba.popularmovies.model.MovieCollection;
+import com.mdzyuba.popularmovies.service.json.MovieParser;
 
 import java.io.IOException;
 import java.net.URL;

@@ -38,4 +38,13 @@ public class MovieApiClientTest {
         assertNotNull(imageUrl);
         assertEquals(expectedUriString, imageUrl.toString());
     }
+
+    @Test
+    public void buildGetReviewsUrl() throws Exception {
+        URL getReviewsUrl = movieApiClient.buildGetReviewsUrl(399579, 1);
+        String expectedUriString = "https://api.themoviedb.org/3/movie/399579/reviews?api_key="
+                                   + BuildConfig.MOVIEDB_KEY + "&language=en-US&page=1";
+        assertNotNull(getReviewsUrl);
+        assertEquals(expectedUriString, getReviewsUrl.toString());
+    }
 }

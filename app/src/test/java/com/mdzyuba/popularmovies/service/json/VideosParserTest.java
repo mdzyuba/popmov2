@@ -1,6 +1,7 @@
-package com.mdzyuba.popularmovies.service;
+package com.mdzyuba.popularmovies.service.json;
 
 import com.mdzyuba.popularmovies.model.VideosCollection;
+import com.mdzyuba.popularmovies.service.TestDataUtils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,4 +1,4 @@
-package com.mdzyuba.popularmovies.service;
+package com.mdzyuba.popularmovies.service.json;
 
 import com.mdzyuba.popularmovies.model.Video;
 import com.mdzyuba.popularmovies.model.VideosCollection;

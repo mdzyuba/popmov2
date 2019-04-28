@@ -1,6 +1,7 @@
 package com.mdzyuba.popularmovies.service;
 
 import com.mdzyuba.popularmovies.model.VideosCollection;
+import com.mdzyuba.popularmovies.service.json.VideosParser;
 
 import java.net.URL;
 

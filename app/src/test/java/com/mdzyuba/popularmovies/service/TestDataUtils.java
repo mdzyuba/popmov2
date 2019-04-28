@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-class TestDataUtils {
+public class TestDataUtils {
 
     private static final String POPULAR_MOVIES_RESPONSE_JSON =
             "popular_movies_response.json";
@@ -49,8 +49,8 @@ class TestDataUtils {
     }
 
     @Nullable
-    private String getJsonString(String fileName) throws IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
+    public static String getJsonString(String fileName) throws IOException {
+        ClassLoader classLoader = TestDataUtils.class.getClassLoader();
         if (classLoader == null) {
             return null;
         }

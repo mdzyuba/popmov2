@@ -31,6 +31,7 @@ public class MovieApiClient {
     private static final String IMAGE_SIZE = "w185";
     private static final String IMAGE_PATH_SEPARATOR = "/";
     private static final String VIDEOS = "videos";
+    public static final String REVIEWS = "reviews";
 
     @NonNull
     public URL buildGetPopularMoviesUrl(int page) {
@@ -55,12 +56,39 @@ public class MovieApiClient {
         return new URL(uri.toString());
     }
 
+    /**
+     * Get the user reviews for a movie.
+     * https://developers.themoviedb.org/3/movies/get-movie-reviews
+     * @param movieId a movie Id
+     * @param page a page number (1..1000)
+     * @return a request URL
+     * @throws MalformedURLException
+     */
+    @NonNull
+    public URL buildGetReviewsUrl(int movieId, int page) throws MalformedURLException {
+        Uri uri = Uri.parse(THEMOVIEDB_ORG).buildUpon()
+                     .appendPath(API_VERSION)
+                     .appendPath(MOVIE)
+                     .appendPath(String.valueOf(movieId))
+                     .appendPath(REVIEWS)
+                     .appendQueryParameter(API_KEY, BuildConfig.MOVIEDB_KEY)
+                     .appendQueryParameter(LANGUAGE, EN_US)
+                     .appendQueryParameter(PAGE, String.valueOf(page))
+                     .build();
+        return new URL(uri.toString());
+    }
+
     @NonNull
     private URL buildGerMovieUrl(String category, int page) {
-        Uri uri = Uri.parse(THEMOVIEDB_ORG).buildUpon().appendPath(API_VERSION).appendPath(MOVIE)
-                     .appendPath(category).appendQueryParameter(API_KEY, BuildConfig.MOVIEDB_KEY)
+        Uri uri = Uri.parse(THEMOVIEDB_ORG)
+                     .buildUpon()
+                     .appendPath(API_VERSION)
+                     .appendPath(MOVIE)
+                     .appendPath(category)
+                     .appendQueryParameter(API_KEY, BuildConfig.MOVIEDB_KEY)
                      .appendQueryParameter(LANGUAGE, EN_US)
-                     .appendQueryParameter(PAGE, String.valueOf(page)).build();
+                     .appendQueryParameter(PAGE, String.valueOf(page))
+                     .build();
         try {
             return new URL(uri.toString());
         } catch (MalformedURLException e) {
