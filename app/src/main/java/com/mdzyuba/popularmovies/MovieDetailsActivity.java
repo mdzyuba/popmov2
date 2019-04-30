@@ -85,6 +85,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void initTrailers(VideosCollection videosCollection) {
+        if (videosCollection == null || videosCollection.getVideos().isEmpty()) {
+            // no trailers available
+            TextView trailerTextView = findViewById(R.id.tv_trailers);
+            trailerTextView.setVisibility(View.GONE);
+            View dividerTrailers = findViewById(R.id.divider_trailers);
+            dividerTrailers.setVisibility(View.GONE);
+            return;
+        }
         LayoutInflater layoutInflater = LayoutInflater.from(MovieDetailsActivity.this);
         ViewGroup trailersView = findViewById(R.id.trailers);
         int i = 1;
@@ -117,6 +125,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void initReviews(Reviews reviews) {
+        if (reviews == null || reviews.results.isEmpty()) {
+            TextView tvReviewsHeader = findViewById(R.id.tv_reviews);
+            tvReviewsHeader.setVisibility(View.GONE);
+            return;
+        }
         LayoutInflater layoutInflater = LayoutInflater.from(MovieDetailsActivity.this);
         ViewGroup reviewsContainer = findViewById(R.id.reviews);
         for (Reviews.Review review: reviews.results) {
