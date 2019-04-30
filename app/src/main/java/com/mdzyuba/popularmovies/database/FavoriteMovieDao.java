@@ -15,8 +15,8 @@ import androidx.room.Update;
 
 @Dao
 public interface FavoriteMovieDao {
-    @Query("SELECT * FROM favorite_movie")
-    LiveData<List<FavoriteMovie>> loadAllFavoriteMovies();
+    @Query("SELECT movie.* FROM favorite_movie inner join movie on favorite_movie.movie_id = movie.id")
+    LiveData<List<Movie>> loadAllFavoriteMovies();
 
     @Query("SELECT * FROM favorite_movie WHERE movie_id = :movieId")
     LiveData<List<FavoriteMovie>> loadFavoriteMovie(int movieId);

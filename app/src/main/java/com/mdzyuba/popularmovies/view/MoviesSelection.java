@@ -2,7 +2,8 @@ package com.mdzyuba.popularmovies.view;
 
 public enum MoviesSelection {
     MOST_POPULAR(0),
-    TOP_RATED(1);
+    TOP_RATED(1),
+    FAVORITE(2);
 
     private final int value;
 
@@ -20,6 +21,8 @@ public enum MoviesSelection {
                 return MOST_POPULAR;
             case 1:
                 return TOP_RATED;
+            case 2:
+                return FAVORITE;
             default:
                 return MOST_POPULAR;
         }

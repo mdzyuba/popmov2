@@ -1,8 +1,13 @@
 package com.mdzyuba.popularmovies.view;
 
+import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.mdzyuba.popularmovies.database.FavoriteMovieDao;
+import com.mdzyuba.popularmovies.database.MovieDao;
+import com.mdzyuba.popularmovies.database.MovieDatabase;
+import com.mdzyuba.popularmovies.model.FavoriteMovie;
 import com.mdzyuba.popularmovies.model.Movie;
 import com.mdzyuba.popularmovies.model.Reviews;
 import com.mdzyuba.popularmovies.model.VideosCollection;
@@ -10,12 +15,19 @@ import com.mdzyuba.popularmovies.service.NetworkDataProvider;
 import com.mdzyuba.popularmovies.service.ReviewsProvider;
 import com.mdzyuba.popularmovies.service.VideoCollectionProvider;
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import java.util.List;
 
-public class MovieDetailsViewModel extends ViewModel {
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+
+public class MovieDetailsViewModel extends AndroidViewModel {
 
     private static final String TAG = MovieDetailsViewModel.class.getSimpleName();
+
+    public final MutableLiveData<Boolean> favorite;
 
     public final MutableLiveData<VideosCollection> videosCollection;
 
@@ -23,10 +35,15 @@ public class MovieDetailsViewModel extends ViewModel {
 
     private final NetworkDataProvider networkDataProvider;
 
-    public MovieDetailsViewModel() {
-        this.networkDataProvider = new NetworkDataProvider();
-        this.videosCollection = new MutableLiveData<>();
-        this.reviews = new MutableLiveData<>();
+    private final MovieDatabase db;
+
+    public MovieDetailsViewModel(@NonNull Application application) {
+        super(application);
+        networkDataProvider = new NetworkDataProvider();
+        favorite = new MutableLiveData<>();
+        videosCollection = new MutableLiveData<>();
+        reviews = new MutableLiveData<>();
+        db = MovieDatabase.getInstance(getApplication());
     }
 
     public void loadVideos(final Movie movie) {
@@ -73,5 +90,49 @@ public class MovieDetailsViewModel extends ViewModel {
             }
         };
         task.execute(movie);
+    }
+
+    public void loadFavoriteFlag(final Movie movie) {
+        FavoriteMovieDao favoriteMovieDao = db.favoriteMovieDao();
+        LiveData<List<FavoriteMovie>> favMovie = favoriteMovieDao.loadFavoriteMovie(movie.getId());
+        favMovie.observeForever(new Observer<List<FavoriteMovie>>() {
+            @Override
+            public void onChanged(List<FavoriteMovie> favoriteMovies) {
+                if (favoriteMovies != null && !favoriteMovies.isEmpty()) {
+                    favorite.postValue(true);
+                } else {
+                    favorite.postValue(false);
+                }
+            }
+        });
+    }
+
+    public void unmarkMovieAsFavorite(final Movie movie) {
+        AsyncTask<Movie, Void, Void> deleteFavoriteMovie = new AsyncTask<Movie, Void, Void>() {
+            @Override
+            protected Void doInBackground(Movie... movies) {
+                Movie mv = movies[0];
+                FavoriteMovieDao favoriteMovieDao = db.favoriteMovieDao();
+                favoriteMovieDao.deleteByMovieId(mv.getId());
+                return null;
+            }
+        };
+        deleteFavoriteMovie.execute(movie);
+    }
+
+    public void markMovieAsFavorite(final Movie movie) {
+        AsyncTask<Movie, Void, Void> addFavoriteMovie = new AsyncTask<Movie, Void, Void>() {
+            @Override
+            protected Void doInBackground(Movie... movies) {
+                Movie mv = movies[0];
+                MovieDao movieDao = db.movieDao();
+                movieDao.insert(mv);
+                FavoriteMovieDao favoriteMovieDao = db.favoriteMovieDao();
+                FavoriteMovie favoriteMovie = new FavoriteMovie(mv.getId());
+                favoriteMovieDao.insert(favoriteMovie);
+                return null;
+            }
+        };
+        addFavoriteMovie.execute(movie);
     }
 }

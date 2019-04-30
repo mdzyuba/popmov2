@@ -32,7 +32,6 @@ import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private RecyclerView movieListView;
     private MovieAdapter movieAdapter;
     private ProgressBar progressBar;
 
@@ -91,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
                         case MOST_POPULAR:
                             setTitle(R.string.most_popular_movies);
                             break;
+                        case FAVORITE:
+                            setTitle(R.string.favorite_movies);
+                            break;
                         default:
                             Log.e(TAG, "The selection is unknown: " + moviesSelection);
                     }
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
         int gridColumns = getResources().getInteger(R.integer.grid_columns);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, gridColumns);
-        movieListView = findViewById(R.id.list_view);
+        RecyclerView movieListView = findViewById(R.id.list_view);
         movieListView.setLayoutManager(gridLayoutManager);
         movieAdapter = new MovieAdapter(this, movieClickListener);
         movieListView.setAdapter(movieAdapter);
@@ -142,6 +144,8 @@ public class MainActivity extends AppCompatActivity {
             viewModel.setMoviesSelection(MoviesSelection.MOST_POPULAR);
         } else if (item.getItemId() == R.id.top_movies) {
             viewModel.setMoviesSelection(MoviesSelection.TOP_RATED);
+        } else if (item.getItemId() == R.id.favorite_movies) {
+            viewModel.setMoviesSelection(MoviesSelection.FAVORITE);
         }
         return super.onOptionsItemSelected(item);
     }

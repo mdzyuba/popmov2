@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,10 +15,6 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mdzyuba.popularmovies.database.FavoriteMovieDao;
-import com.mdzyuba.popularmovies.database.MovieDao;
-import com.mdzyuba.popularmovies.database.MovieDatabase;
-import com.mdzyuba.popularmovies.model.FavoriteMovie;
 import com.mdzyuba.popularmovies.model.Movie;
 import com.mdzyuba.popularmovies.model.Reviews;
 import com.mdzyuba.popularmovies.model.Video;
@@ -31,10 +26,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -87,6 +80,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             initView();
             viewModel.loadVideos(movie);
             viewModel.loadReviews(movie);
+            viewModel.loadFavoriteFlag(movie);
         }
     }
 
@@ -137,7 +131,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
     }
 
-
     @SuppressLint("DefaultLocale")
     private void initView() {
         initTextView(R.id.tv_title, movie.getTitle());
@@ -152,15 +145,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void initFavoriteCheckBox() {
         favoriteCb = findViewById(R.id.cb_favorite);
-        MovieDatabase db = MovieDatabase.getInstance(MovieDetailsActivity.this);
-        FavoriteMovieDao favoriteMovieDao = db.favoriteMovieDao();
-        LiveData<List<FavoriteMovie>> favMovie = favoriteMovieDao.loadFavoriteMovie(movie.getId());
-        favMovie.observe(this, new Observer<List<FavoriteMovie>>() {
+        viewModel.favorite.observe(this, new Observer<Boolean>() {
             @Override
-            public void onChanged(List<FavoriteMovie> favoriteMovies) {
-                if (favoriteMovies != null && !favoriteMovies.isEmpty()) {
-                    favoriteCb.setChecked(true);
-                }
+            public void onChanged(Boolean favorite) {
+                favoriteCb.setChecked(favorite);
             }
         });
         favoriteCb.setOnClickListener(new View.OnClickListener() {
@@ -168,43 +156,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 boolean checked = ((CheckBox) v).isChecked();
                 if (checked) {
-                    markMovieAsFavorite();
+                    viewModel.markMovieAsFavorite(movie);
                 } else {
-                    unmarkMovieAsFavorite();
+                    viewModel.unmarkMovieAsFavorite(movie);
                 }
             }
         });
-    }
-
-    private void unmarkMovieAsFavorite() {
-        AsyncTask<Movie, Void, Void> deleteFavoriteMovie = new AsyncTask<Movie, Void, Void>() {
-            @Override
-            protected Void doInBackground(Movie... movies) {
-                Movie mv = movies[0];
-                MovieDatabase db = MovieDatabase.getInstance(MovieDetailsActivity.this);
-                FavoriteMovieDao favoriteMovieDao = db.favoriteMovieDao();
-                favoriteMovieDao.deleteByMovieId(mv.getId());
-                return null;
-            }
-        };
-        deleteFavoriteMovie.execute(movie);
-    }
-
-    private void markMovieAsFavorite() {
-        AsyncTask<Movie, Void, Void> addFavoriteMovie = new AsyncTask<Movie, Void, Void>() {
-            @Override
-            protected Void doInBackground(Movie... movies) {
-                Movie mv = movies[0];
-                MovieDatabase db = MovieDatabase.getInstance(MovieDetailsActivity.this);
-                MovieDao movieDao = db.movieDao();
-                movieDao.insert(mv);
-                FavoriteMovieDao favoriteMovieDao = db.favoriteMovieDao();
-                FavoriteMovie favoriteMovie = new FavoriteMovie(mv.getId());
-                favoriteMovieDao.insert(favoriteMovie);
-                return null;
-            }
-        };
-        addFavoriteMovie.execute(movie);
     }
 
     private void initTextView(int resourceId, String text) {

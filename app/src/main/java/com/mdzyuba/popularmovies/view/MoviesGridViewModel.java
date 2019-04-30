@@ -1,9 +1,10 @@
 package com.mdzyuba.popularmovies.view;
 
+import android.app.Application;
 import android.util.Log;
 
 import com.mdzyuba.popularmovies.model.Movie;
-import com.mdzyuba.popularmovies.service.MovieLoadListener;
+import com.mdzyuba.popularmovies.service.FavoriteMoviesProvider;
 import com.mdzyuba.popularmovies.service.MoviesProvider;
 import com.mdzyuba.popularmovies.service.NetworkDataProvider;
 import com.mdzyuba.popularmovies.service.PopularMoviesProvider;
@@ -12,31 +13,33 @@ import com.mdzyuba.popularmovies.service.TopRatedMoviesProvider;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 
-public class MoviesGridViewModel extends ViewModel {
+public class MoviesGridViewModel extends AndroidViewModel {
     private static final String TAG = MoviesGridViewModel.class.getSimpleName();
 
-    private final NetworkDataProvider networkDataProvider;
     private MoviesProvider moviesProvider;
     private final TopRatedMoviesProvider topRatedMoviesProvider;
     private final PopularMoviesProvider popularMoviesProvider;
+    private final FavoriteMoviesProvider favoriteMoviesProvider;
 
     private final MutableLiveData<MoviesSelection> moviesSelection;
     private final MutableLiveData<List<Movie>> movieList;
     private final MutableLiveData<Boolean> moviesAreLoading;
     private final MutableLiveData<Exception> dataLoadException;
 
-    public MoviesGridViewModel() {
+    public MoviesGridViewModel(@NonNull Application application) {
+        super(application);
         movieList = new MutableLiveData<>();
         moviesAreLoading = new MutableLiveData<>();
         moviesSelection = new MutableLiveData<>();
         dataLoadException = new MutableLiveData<>();
-        networkDataProvider = new NetworkDataProvider();
+        NetworkDataProvider networkDataProvider = new NetworkDataProvider();
         popularMoviesProvider = new PopularMoviesProvider(networkDataProvider);
         topRatedMoviesProvider = new TopRatedMoviesProvider(networkDataProvider);
+        favoriteMoviesProvider = new FavoriteMoviesProvider(application.getApplicationContext());
         moviesSelection.setValue(MoviesSelection.MOST_POPULAR);
         moviesProvider = popularMoviesProvider;
     }
@@ -77,6 +80,9 @@ public class MoviesGridViewModel extends ViewModel {
             case MOST_POPULAR:
                 moviesProvider = popularMoviesProvider;
                 break;
+            case FAVORITE:
+                moviesProvider = favoriteMoviesProvider;
+                break;
             default:
                 Log.e(TAG, "The selection is unknown: " + selection);
                 moviesProvider = topRatedMoviesProvider;
@@ -85,26 +91,7 @@ public class MoviesGridViewModel extends ViewModel {
     }
 
     public void loadMovies() {
-        InitPopularMoviesTask initPopularMoviesTask =
-                new InitPopularMoviesTask(moviesProvider, new MovieLoadListener() {
-                    @Override
-                    public void onLoadStarted() {
-                        moviesAreLoading.setValue(true);
-                    }
-
-                    @Override
-                    public void onLoaded(List<Movie> movies) {
-                        moviesAreLoading.setValue(false);
-                        movieList.setValue(movies);
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        moviesAreLoading.setValue(false);
-                        dataLoadException.setValue(e);
-                    }
-                });
-        initPopularMoviesTask.execute();
+        moviesProvider.getMovies(movieList, moviesAreLoading, dataLoadException);
     }
 
     public void resetException() {
