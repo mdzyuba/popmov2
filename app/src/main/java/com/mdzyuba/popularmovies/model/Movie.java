@@ -7,30 +7,61 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
+@Entity(tableName = "movie")
 public class Movie implements Parcelable {
 
     private static final String TAG = Movie.class.getSimpleName();
 
-    private final Integer id;
-    private final String title;
-    private final String posterPath;
-    private final Boolean adult;
-    private final String overview;
-    private final Date releaseDate;
-    private final Integer[] genreIDs;
-    private final String originalTitle;
-    private final String originalLanguage;
-    private final String backdropPath;
-    private final Integer popularity;
-    private final Integer voteCount;
-    private final Boolean video;
-    private final Float voteAverage;
+    @PrimaryKey
+    @NonNull
+    private Integer id;
+    private String title;
+    private String posterPath;
+    private Boolean adult;
+    private String overview;
+    private Date releaseDate;
+    @Ignore
+    private Integer[] genreIDs;
+    private String originalTitle;
+    private String originalLanguage;
+    private String backdropPath;
+    private Integer popularity;
+    private Integer voteCount;
+    private Boolean video;
+    private Float voteAverage;
 
+    private Boolean favorite;
+
+    @Ignore
     private VideosCollection videosCollection;
 
-    private Movie(Integer id, String title, String posterPath, Boolean adult, String overview, Date releaseDate,
+    public Movie(@NonNull Integer id, String title, String posterPath, Boolean adult,
+                 String overview, Date releaseDate, String originalTitle,
+                 String originalLanguage, String backdropPath, Integer popularity,
+                 Integer voteCount, Boolean video, Float voteAverage, Boolean favorite) {
+        this.id = id;
+        this.title = title;
+        this.posterPath = posterPath;
+        this.adult = adult;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+        this.originalTitle = originalTitle;
+        this.originalLanguage = originalLanguage;
+        this.backdropPath = backdropPath;
+        this.popularity = popularity;
+        this.voteCount = voteCount;
+        this.video = video;
+        this.voteAverage = voteAverage;
+        this.favorite = favorite;
+    }
+
+    private Movie(@NonNull Integer id, String title, String posterPath, Boolean adult, String overview, Date releaseDate,
                   Integer[] genreIDs, String originalTitle, String originalLanguage,
                   String backdropPath, Integer popularity, Integer voteCount, Boolean video,
                   Float voteAverage) {
@@ -48,6 +79,7 @@ public class Movie implements Parcelable {
         this.voteCount = voteCount;
         this.video = video;
         this.voteAverage = voteAverage;
+        this.favorite = false;
     }
 
     @Nullable
@@ -80,7 +112,7 @@ public class Movie implements Parcelable {
         return genreIDs;
     }
 
-    @Nullable
+    @NonNull
     public Integer getId() {
         return id;
     }
@@ -118,6 +150,14 @@ public class Movie implements Parcelable {
     @Nullable
     public Float getVoteAverage() {
         return voteAverage;
+    }
+
+    public Boolean getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        this.favorite = favorite;
     }
 
     public VideosCollection getVideosCollection() {
