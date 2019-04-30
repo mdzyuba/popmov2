@@ -133,7 +133,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         LayoutInflater layoutInflater = LayoutInflater.from(MovieDetailsActivity.this);
         ViewGroup reviewsContainer = findViewById(R.id.reviews);
         for (Reviews.Review review: reviews.results) {
-            View reviewView = layoutInflater.inflate(R.layout.review_item, reviewsContainer, false);
+            View reviewView = layoutInflater.inflate(R.layout.review_item_card, reviewsContainer, false);
 
             TextView authorTv = reviewView.findViewById(R.id.tv_author);
             authorTv.setText(review.author);
