@@ -48,7 +48,7 @@ public class PicassoProvider {
                         Log.e(TAG, "Error loading an image: " + uri, exception);
                     }
                 });
-                OkHttpClient client = HttpClientProvider.getClient();
+                OkHttpClient client = HttpClientProvider.getClient(context);
                 picassoBuilder.downloader(new OkHttp3Downloader(client));
                 instance = picassoBuilder.build();
             }

@@ -1,5 +1,9 @@
 package com.mdzyuba.popularmovies.service;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
@@ -16,13 +20,19 @@ public class NetworkDataProvider {
 
     private static final String DELIMITER = "\\A";
 
+    private Context context;
+
+    public NetworkDataProvider(Context context) {
+        this.context = context;
+    }
+
     @Nullable
     public String getResponseFromHttpUrl(URL url) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
 
-        OkHttpClient client = HttpClientProvider.getClient();
+        OkHttpClient client = HttpClientProvider.getClient(context);
         try (Response response = client.newCall(request).execute()) {
             ResponseBody body = response.body();
             if (body == null) {
@@ -40,6 +50,13 @@ public class NetworkDataProvider {
                 }
             }
         }
+    }
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 }

@@ -41,14 +41,6 @@ public class MovieParser {
         }
         try {
             JSONObject jsonObject = new JSONObject(json);
-
-            if (BuildConfig.DEBUG) {
-                Iterator<String> keyIterator = jsonObject.keys();
-                while (keyIterator.hasNext()) {
-                    Log.d(TAG, "key: " + keyIterator.next());
-                }
-            }
-
             int page = jsonObject.optInt(PAGE);
             int totalPages = jsonObject.optInt(TOTAL_PAGES);
             JSONArray results = jsonObject.optJSONArray(RESULTS);

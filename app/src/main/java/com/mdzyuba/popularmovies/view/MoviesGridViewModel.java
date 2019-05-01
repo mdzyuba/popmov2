@@ -3,6 +3,7 @@ package com.mdzyuba.popularmovies.view;
 import android.app.Application;
 import android.util.Log;
 
+import com.mdzyuba.popularmovies.database.MovieDatabase;
 import com.mdzyuba.popularmovies.model.Movie;
 import com.mdzyuba.popularmovies.service.FavoriteMoviesProvider;
 import com.mdzyuba.popularmovies.service.MoviesProvider;
@@ -36,9 +37,10 @@ public class MoviesGridViewModel extends AndroidViewModel {
         moviesAreLoading = new MutableLiveData<>();
         moviesSelection = new MutableLiveData<>();
         dataLoadException = new MutableLiveData<>();
-        NetworkDataProvider networkDataProvider = new NetworkDataProvider();
-        popularMoviesProvider = new PopularMoviesProvider(networkDataProvider);
-        topRatedMoviesProvider = new TopRatedMoviesProvider(networkDataProvider);
+        NetworkDataProvider networkDataProvider = new NetworkDataProvider(getApplication());
+        MovieDatabase db = MovieDatabase.getInstance(getApplication());
+        popularMoviesProvider = new PopularMoviesProvider(networkDataProvider, db);
+        topRatedMoviesProvider = new TopRatedMoviesProvider(networkDataProvider, db);
         favoriteMoviesProvider = new FavoriteMoviesProvider(application.getApplicationContext());
         moviesSelection.setValue(MoviesSelection.MOST_POPULAR);
         moviesProvider = popularMoviesProvider;

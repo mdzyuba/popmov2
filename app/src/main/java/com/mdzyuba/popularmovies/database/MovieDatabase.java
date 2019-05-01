@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.mdzyuba.popularmovies.model.FavoriteMovie;
 import com.mdzyuba.popularmovies.model.Movie;
+import com.mdzyuba.popularmovies.model.PopularMovie;
+import com.mdzyuba.popularmovies.model.TopMovie;
 
 import androidx.room.Database;
 import androidx.room.Room;
@@ -12,7 +14,12 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 
-@Database(entities = {Movie.class, FavoriteMovie.class}, version = 1, exportSchema = false)
+@Database(entities = {
+                        Movie.class,
+                        FavoriteMovie.class,
+                        PopularMovie.class,
+                        TopMovie.class
+                     }, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class MovieDatabase extends RoomDatabase {
     private static final String TAG = MovieDatabase.class.getSimpleName();
@@ -38,4 +45,7 @@ public abstract class MovieDatabase extends RoomDatabase {
 
     public abstract FavoriteMovieDao favoriteMovieDao();
 
+    public abstract PopularMovieDao popularMovieDao();
+
+    public abstract TopMovieDao topMovieDao();
 }

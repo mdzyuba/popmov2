@@ -39,7 +39,7 @@ public class MovieDetailsViewModel extends AndroidViewModel {
 
     public MovieDetailsViewModel(@NonNull Application application) {
         super(application);
-        networkDataProvider = new NetworkDataProvider();
+        networkDataProvider = new NetworkDataProvider(getApplication());
         favorite = new MutableLiveData<>();
         videosCollection = new MutableLiveData<>();
         reviews = new MutableLiveData<>();

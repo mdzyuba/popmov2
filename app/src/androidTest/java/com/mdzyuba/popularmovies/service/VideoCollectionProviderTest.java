@@ -1,5 +1,7 @@
 package com.mdzyuba.popularmovies.service;
 
+import android.content.Context;
+
 import com.mdzyuba.popularmovies.model.Video;
 import com.mdzyuba.popularmovies.model.VideosCollection;
 
@@ -7,13 +9,16 @@ import org.junit.Test;
 
 import java.util.List;
 
+import androidx.test.platform.app.InstrumentationRegistry;
+
 import static org.junit.Assert.*;
 
 public class VideoCollectionProviderTest {
 
     @Test
     public void getVideos() throws Exception {
-        NetworkDataProvider networkDataProvider = new NetworkDataProvider();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getContext();
+        NetworkDataProvider networkDataProvider = new NetworkDataProvider(appContext);
         VideoCollectionProvider provider = new VideoCollectionProvider(networkDataProvider);
         VideosCollection videosCollection = provider.getVideos(399579);
         assertSampleVideoCollection(videosCollection);
