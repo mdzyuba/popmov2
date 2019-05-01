@@ -5,10 +5,10 @@ import java.util.List;
 
 public class Reviews {
 
-    public final int id;
-    public final int page;
-    public final int totalPages;
-    public final int totalResults;
+    private int id;
+    private int page;
+    private int totalPages;
+    private int totalResults;
     public final List<Review> results;
 
     public Reviews(int id, int page, int totalPages, int totalResults) {
@@ -35,5 +35,31 @@ public class Reviews {
 
     public void addReview(Review review) {
         results.add(review);
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public int getTotalResults() {
+        return totalResults;
+    }
+
+    public int getTotalPages() {
+        return totalPages;
+    }
+
+    public void addReviews(Reviews reviews) {
+        if (reviews.page <= page) {
+            return;
+        }
+        id = reviews.id;
+        page = reviews.page;
+        results.addAll(reviews.results);
+        totalResults = results.size();
+    }
+
+    public boolean canGetMorePages() {
+        return page < totalPages;
     }
 }

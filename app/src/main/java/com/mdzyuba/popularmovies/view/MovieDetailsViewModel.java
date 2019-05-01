@@ -74,14 +74,31 @@ public class MovieDetailsViewModel extends AndroidViewModel {
             @Override
             protected Reviews doInBackground(Movie... movies) {
                 Movie mv = movies[0];
-                ReviewsProvider provider = new ReviewsProvider(networkDataProvider);
+                Reviews movieReviews = mv.getReviews();
+                if (movieReviews != null && !movieReviews.canGetMorePages()) {
+                    return movieReviews;
+                }
                 try {
-                    Reviews reviews = provider.getReviews(mv.getId(), 1);
+                    ReviewsProvider provider = new ReviewsProvider(networkDataProvider);
+                    int page = getNextPage(mv);
+                    Reviews reviews = provider.getReviews(mv.getId(), page);
+                    mv.setOrUpdateReviews(reviews);
                     return reviews;
                 } catch (Exception e) {
                     Log.e(TAG, "Error: " + e.getMessage(), e);
                 }
                 return null;
+            }
+
+            private int getNextPage(Movie mv) {
+                int page = 1;
+                if (mv.getReviews() != null) {
+                    Reviews movieReviews = mv.getReviews();
+                    if (movieReviews.getPage() < movieReviews.getTotalPages()) {
+                        page = movieReviews.getPage() + 1;
+                    }
+                }
+                return page;
             }
 
             @Override
@@ -107,7 +124,7 @@ public class MovieDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    public void unmarkMovieAsFavorite(final Movie movie) {
+    public void clearMovieFavoriteFlag(final Movie movie) {
         AsyncTask<Movie, Void, Void> deleteFavoriteMovie = new AsyncTask<Movie, Void, Void>() {
             @Override
             protected Void doInBackground(Movie... movies) {

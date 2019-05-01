@@ -20,4 +20,5 @@
     <string name="reviews">Reviews:</string>
     <string name="author">Author:</string>
     <string name="favorite">Favorite</string>
+    <string name="show_more_reviews">Show more reviews</string>
 </resources>

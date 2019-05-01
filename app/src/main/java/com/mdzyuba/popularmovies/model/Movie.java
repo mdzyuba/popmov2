@@ -41,6 +41,9 @@ public class Movie implements Parcelable {
     @Ignore
     private VideosCollection videosCollection;
 
+    @Ignore
+    private Reviews reviews;
+
     public Movie(@NonNull Integer id, String title, String posterPath, Boolean adult,
                  String overview, Date releaseDate, String originalTitle,
                  String originalLanguage, String backdropPath, Integer popularity,
@@ -166,6 +169,18 @@ public class Movie implements Parcelable {
 
     public void setVideosCollection(VideosCollection videosCollection) {
         this.videosCollection = videosCollection;
+    }
+
+    public Reviews getReviews() {
+        return reviews;
+    }
+
+    public void setOrUpdateReviews(Reviews reviews) {
+        if (this.reviews == null) {
+            this.reviews = reviews;
+        } else {
+            this.reviews.addReviews(reviews);
+        }
     }
 
     public static class Builder {

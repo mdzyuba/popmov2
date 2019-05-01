@@ -142,6 +142,17 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
             reviewsContainer.addView(reviewView);
         }
+        if (reviews.canGetMorePages()) {
+            View showMoreView = layoutInflater.inflate(R.layout.load_more_reviews, reviewsContainer, false);
+            reviewsContainer.addView(showMoreView);
+            Button showMoreReviewsButton = showMoreView.findViewById(R.id.show_more_reviews_button);
+            showMoreReviewsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    viewModel.loadReviews(movie);
+                }
+            });
+        }
     }
 
     @SuppressLint("DefaultLocale")
@@ -171,7 +182,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 if (checked) {
                     viewModel.markMovieAsFavorite(movie);
                 } else {
-                    viewModel.unmarkMovieAsFavorite(movie);
+                    viewModel.clearMovieFavoriteFlag(movie);
                 }
             }
         });
