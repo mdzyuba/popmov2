@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.mdzyuba.popularmovies.R;
 import com.mdzyuba.popularmovies.model.Movie;
@@ -74,6 +75,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             super(itemView);
             imageView = itemView.findViewById(R.id.image);
             imageView.setOnClickListener(this);
+
         }
 
         @Override
@@ -83,6 +85,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
         void bind(@NonNull Movie movie) {
             ImageUtil.loadImage(picasso, movie, imageView);
+            TextView title = itemView.findViewById(R.id.title);
+            ImageUtil.updateMoviePosterPlaceholder(title, movie);
         }
     }
 }

@@ -129,6 +129,11 @@ public class MainActivity extends AppCompatActivity {
         viewModel.areMoviesLoading().observe(this, moviesLoadingObserver);
         viewModel.getMoviesSelection().observe(this, moviesSelectionObserver);
         viewModel.getDataLoadException().observe(this, dataLoadingExceptionObserver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         viewModel.loadMovies();
     }
 

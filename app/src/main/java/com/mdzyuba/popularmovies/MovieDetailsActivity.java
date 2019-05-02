@@ -199,8 +199,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void initPosterImage() {
         ImageView imageView = findViewById(R.id.iv_poster);
-        if (movie.getPosterPath() != null) {
-            ImageUtil.loadImage(picasso, movie, imageView);
+        ImageUtil.loadImage(picasso, movie, imageView);
+        if (movie.getPosterPath() == null) {
+            TextView title = findViewById(R.id.poster_title);
+            ImageUtil.updateMoviePosterPlaceholder(title, movie);
         }
     }
 

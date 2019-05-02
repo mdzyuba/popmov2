@@ -1,7 +1,6 @@
 package com.mdzyuba.popularmovies.service.json;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.mdzyuba.popularmovies.BuildConfig;
@@ -16,9 +15,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class MovieParser {
 
@@ -32,6 +33,7 @@ public class MovieParser {
     private static final String VOTE_AVERAGE = "vote_average";
     private static final String PAGE = "page";
     private static final String TOTAL_PAGES = "total_pages";
+    private static final String NULL_STRING = "null";
 
     @NonNull
     public MovieCollection parseMovieCollection(@Nullable String json) {
@@ -69,7 +71,7 @@ public class MovieParser {
         Movie.Builder movieBuilder = new Movie.Builder();
         Integer id = jsonMovie.optInt(ID);
         String title = jsonMovie.optString(TITLE);
-        String posterPath = jsonMovie.optString(POSTER_PATH);
+        String posterPath = getString(jsonMovie, POSTER_PATH);
         String overview = jsonMovie.optString(OVERVIEW);
         String releaseDate = jsonMovie.optString(RELEASE_DATE);
         String voteAverage = jsonMovie.optString(VOTE_AVERAGE);
@@ -89,6 +91,26 @@ public class MovieParser {
         }
 
         return movieBuilder.build();
+    }
+
+    /**
+     * Retrieves a json object property value and converts "null" to null.
+     *
+     * In some cases, IMDB returns "null" for a property. This method will return null in this case.
+     *
+     * @param jsonObject a jsonObject to parse.
+     * @param tag a tag to retrieve.
+     * @return a value of a tag
+     */
+    private String getString(@NonNull JSONObject jsonObject, @NonNull String tag) {
+        String value = jsonObject.optString(tag);
+        if (NULL_STRING.equals(value) || TextUtils.isEmpty(value)) {
+            if (BuildConfig.DEBUG && POSTER_PATH.equals(tag)) {
+                Log.d(TAG, "The jsonObject has a null poster: " + jsonObject.toString());
+            }
+            return null;
+        }
+        return value;
     }
 
     Date toDate(String date) {
