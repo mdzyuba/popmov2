@@ -159,4 +159,5 @@ public class MovieDetailsViewModel extends AndroidViewModel {
         };
         addFavoriteMovie.execute(movie);
     }
+
 }

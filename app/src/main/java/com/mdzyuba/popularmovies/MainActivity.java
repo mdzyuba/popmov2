@@ -14,6 +14,8 @@ import com.mdzyuba.popularmovies.model.Movie;
 import com.mdzyuba.popularmovies.view.MovieAdapter;
 import com.mdzyuba.popularmovies.view.MoviesGridViewModel;
 import com.mdzyuba.popularmovies.view.MoviesSelection;
+import com.mdzyuba.popularmovies.view.SharedViewModel;
+import com.mdzyuba.popularmovies.view.SharedViewModelFactory;
 
 import java.util.List;
 
@@ -34,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private MovieAdapter movieAdapter;
     private ProgressBar progressBar;
-
     private MoviesGridViewModel viewModel;
+    private SharedViewModel sharedViewModel;
 
     private final MovieAdapter.MovieClickListener movieClickListener =
             new MovieAdapter.MovieClickListener() {
@@ -109,12 +111,25 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private final Observer<Boolean> refreshFavoriteMoviesObserver = new Observer<Boolean>() {
+        @Override
+        public void onChanged(Boolean refreshFavorites) {
+            if (refreshFavorites &&
+                viewModel.getMoviesSelection().getValue() == MoviesSelection.FAVORITE) {
+                viewModel.loadMovies();
+                sharedViewModel.getRefreshFavoriteMovies().setValue(false);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         viewModel = ViewModelProviders.of(this).get(MoviesGridViewModel.class);
+        SharedViewModelFactory sharedViewModelFactory = new SharedViewModelFactory();
+        sharedViewModel = ViewModelProviders.of(this, sharedViewModelFactory).get(SharedViewModel.class);
         progressBar = findViewById(R.id.progress_circular);
 
         int gridColumns = getResources().getInteger(R.integer.grid_columns);
@@ -129,12 +144,7 @@ public class MainActivity extends AppCompatActivity {
         viewModel.areMoviesLoading().observe(this, moviesLoadingObserver);
         viewModel.getMoviesSelection().observe(this, moviesSelectionObserver);
         viewModel.getDataLoadException().observe(this, dataLoadingExceptionObserver);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        viewModel.loadMovies();
+        sharedViewModel.refreshFavoriteMovies.observe(this, refreshFavoriteMoviesObserver);
     }
 
     @Override

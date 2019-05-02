@@ -3,6 +3,7 @@ package com.mdzyuba.popularmovies.view;
 import android.app.Application;
 import android.util.Log;
 
+import com.mdzyuba.popularmovies.BuildConfig;
 import com.mdzyuba.popularmovies.database.MovieDatabase;
 import com.mdzyuba.popularmovies.model.Movie;
 import com.mdzyuba.popularmovies.service.FavoriteMoviesProvider;
@@ -44,6 +45,7 @@ public class MoviesGridViewModel extends AndroidViewModel {
         favoriteMoviesProvider = new FavoriteMoviesProvider(application.getApplicationContext());
         moviesSelection.setValue(MoviesSelection.MOST_POPULAR);
         moviesProvider = popularMoviesProvider;
+        loadMovies();
     }
 
     public MutableLiveData<List<Movie>> getMovieList() {
@@ -93,6 +95,9 @@ public class MoviesGridViewModel extends AndroidViewModel {
     }
 
     public void loadMovies() {
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "load movies ...");
+        }
         moviesProvider.getMovies(movieList, moviesAreLoading, dataLoadException);
     }
 

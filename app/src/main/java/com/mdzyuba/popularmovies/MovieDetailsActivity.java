@@ -22,6 +22,8 @@ import com.mdzyuba.popularmovies.model.VideosCollection;
 import com.mdzyuba.popularmovies.view.ImageUtil;
 import com.mdzyuba.popularmovies.view.MovieDetailsViewModel;
 import com.mdzyuba.popularmovies.view.PicassoProvider;
+import com.mdzyuba.popularmovies.view.SharedViewModel;
+import com.mdzyuba.popularmovies.view.SharedViewModelFactory;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -38,9 +40,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private static final String TAG = MovieDetailsActivity.class.getSimpleName();
     private static final String KEY_MOVIE = "MOVIE";
     private static final String YOUTUBE = "https://www.youtube.com/watch?v=%s";
+
     private Movie movie;
     private Picasso picasso;
     private MovieDetailsViewModel viewModel;
+    private SharedViewModel sharedViewModel;
     private CheckBox favoriteCb;
 
     @Override
@@ -48,6 +52,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
         viewModel = ViewModelProviders.of(this).get(MovieDetailsViewModel.class);
+
+        SharedViewModelFactory sharedViewModelFactory = new SharedViewModelFactory();
+        sharedViewModel = ViewModelProviders.of(this, sharedViewModelFactory).get(SharedViewModel.class);
 
         if (movie == null) {
             Intent intent = getIntent();
@@ -172,6 +179,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
             @Override
             public void onChanged(Boolean favorite) {
                 favoriteCb.setChecked(favorite);
+                // If a user cleared the movie favorite flag,
+                // refresh the list of favorite movies once we navigate back
+                // to the main activity.
+                if (!favorite) {
+                    sharedViewModel.getRefreshFavoriteMovies().postValue(true);
+                }
             }
         });
         favoriteCb.setOnClickListener(new View.OnClickListener() {
