@@ -87,10 +87,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private void initTrailers(VideosCollection videosCollection) {
         if (videosCollection == null || videosCollection.getVideos().isEmpty()) {
             // no trailers available
-            TextView trailerTextView = findViewById(R.id.tv_trailers);
-            trailerTextView.setVisibility(View.GONE);
-            View dividerTrailers = findViewById(R.id.divider_trailers);
-            dividerTrailers.setVisibility(View.GONE);
+            TextView noTrailers = findViewById(R.id.tv_no_trailers);
+            noTrailers.setVisibility(View.VISIBLE);
             return;
         }
         LayoutInflater layoutInflater = LayoutInflater.from(MovieDetailsActivity.this);
@@ -126,8 +124,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void initReviews(Reviews reviews) {
         if (reviews == null || reviews.results.isEmpty()) {
-            TextView tvReviewsHeader = findViewById(R.id.tv_reviews);
-            tvReviewsHeader.setVisibility(View.GONE);
+            // no reviews available
+            TextView noReviews = findViewById(R.id.tv_no_reviews);
+            noReviews.setVisibility(View.VISIBLE);
             return;
         }
         LayoutInflater layoutInflater = LayoutInflater.from(MovieDetailsActivity.this);
