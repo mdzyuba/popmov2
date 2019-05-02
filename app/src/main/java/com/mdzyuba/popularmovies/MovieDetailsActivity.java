@@ -19,7 +19,7 @@ import com.mdzyuba.popularmovies.model.Movie;
 import com.mdzyuba.popularmovies.model.Reviews;
 import com.mdzyuba.popularmovies.model.Video;
 import com.mdzyuba.popularmovies.model.VideosCollection;
-import com.mdzyuba.popularmovies.view.ImageUtil;
+import com.mdzyuba.popularmovies.view.MoviePosterImageUtil;
 import com.mdzyuba.popularmovies.view.MovieDetailsViewModel;
 import com.mdzyuba.popularmovies.view.MovieDetailsViewModelFactory;
 import com.mdzyuba.popularmovies.view.PicassoProvider;
@@ -216,11 +216,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void initPosterImage() {
         ImageView imageView = findViewById(R.id.iv_poster);
-        ImageUtil.loadImage(picasso, movie, imageView);
-        if (movie.getPosterPath() == null) {
-            TextView title = findViewById(R.id.poster_title);
-            ImageUtil.updateMoviePosterPlaceholder(title, movie);
-        }
+        TextView title = findViewById(R.id.poster_title);
+        MoviePosterImageUtil.loadImage(picasso, movie, imageView, title);
     }
 
     private void initReleaseYear() {

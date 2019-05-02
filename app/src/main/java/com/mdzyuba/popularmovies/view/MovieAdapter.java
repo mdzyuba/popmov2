@@ -27,11 +27,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     private final Picasso picasso;
 
+    private Context context;
+
     public interface MovieClickListener {
         void onMovieClick(Movie movie);
     }
 
     public MovieAdapter(Context context, @NonNull MovieClickListener movieClickListener) {
+        this.context = context;
         this.movieList = new ArrayList<>();
         this.movieClickListener = movieClickListener;
         this.picasso = PicassoProvider.getPicasso(context.getApplicationContext());
@@ -84,9 +87,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         }
 
         void bind(@NonNull Movie movie) {
-            ImageUtil.loadImage(picasso, movie, imageView);
             TextView title = itemView.findViewById(R.id.title);
-            ImageUtil.updateMoviePosterPlaceholder(title, movie);
+            MoviePosterImageUtil.loadImage(picasso, movie, imageView, title);
         }
     }
 }
