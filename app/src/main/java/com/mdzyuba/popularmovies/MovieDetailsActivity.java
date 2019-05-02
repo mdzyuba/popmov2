@@ -21,6 +21,7 @@ import com.mdzyuba.popularmovies.model.Video;
 import com.mdzyuba.popularmovies.model.VideosCollection;
 import com.mdzyuba.popularmovies.view.ImageUtil;
 import com.mdzyuba.popularmovies.view.MovieDetailsViewModel;
+import com.mdzyuba.popularmovies.view.MovieDetailsViewModelFactory;
 import com.mdzyuba.popularmovies.view.PicassoProvider;
 import com.mdzyuba.popularmovies.view.SharedViewModel;
 import com.mdzyuba.popularmovies.view.SharedViewModelFactory;
@@ -50,11 +51,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_details);
-        viewModel = ViewModelProviders.of(this).get(MovieDetailsViewModel.class);
-
-        SharedViewModelFactory sharedViewModelFactory = new SharedViewModelFactory();
-        sharedViewModel = ViewModelProviders.of(this, sharedViewModelFactory).get(SharedViewModel.class);
 
         if (movie == null) {
             Intent intent = getIntent();
@@ -62,6 +58,18 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 movie = intent.getParcelableExtra(KEY_MOVIE);
             }
         }
+
+        if (movie == null) {
+            Log.e(TAG, "Missing movie parameter");
+            return;
+        }
+
+        setContentView(R.layout.activity_movie_details);
+        MovieDetailsViewModelFactory factory = new MovieDetailsViewModelFactory(getApplication(), movie);
+        viewModel = ViewModelProviders.of(this, factory).get(MovieDetailsViewModel.class);
+
+        SharedViewModelFactory sharedViewModelFactory = new SharedViewModelFactory();
+        sharedViewModel = ViewModelProviders.of(this, sharedViewModelFactory).get(SharedViewModel.class);
 
         if (picasso == null) {
             picasso = PicassoProvider.getPicasso(this.getApplicationContext());
@@ -85,9 +93,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         if (movie != null) {
             initView();
-            viewModel.loadVideos(movie);
-            viewModel.loadReviews(movie);
-            viewModel.loadFavoriteFlag(movie);
         }
     }
 
@@ -155,7 +160,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             showMoreReviewsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    viewModel.loadReviews(movie);
+                    viewModel.loadOrUpdateReviews(movie);
                 }
             });
         }

@@ -38,16 +38,19 @@ public class MovieDetailsViewModel extends AndroidViewModel {
 
     private final MovieDatabase db;
 
-    public MovieDetailsViewModel(@NonNull Application application) {
+    public MovieDetailsViewModel(@NonNull Application application, @NonNull final Movie movie) {
         super(application);
         networkDataProvider = new NetworkDataProvider(getApplication());
         favorite = new MutableLiveData<>();
         videosCollection = new MutableLiveData<>();
         reviews = new MutableLiveData<>();
         db = MovieDatabase.getInstance(getApplication());
+        loadVideos(movie);
+        loadOrUpdateReviews(movie);
+        loadFavoriteFlag(movie);
     }
 
-    public void loadVideos(@NonNull final Movie movie) {
+    private void loadVideos(@NonNull final Movie movie) {
         AsyncTask<Movie, Void, VideosCollection> task = new AsyncTask<Movie, Void, VideosCollection>() {
             @Nullable
             @Override
@@ -55,8 +58,7 @@ public class MovieDetailsViewModel extends AndroidViewModel {
                 Movie mv = movies[0];
                 VideoCollectionProvider provider = new VideoCollectionProvider(networkDataProvider);
                 try {
-                    VideosCollection videosCollection = provider.getVideos(mv.getId());
-                    return videosCollection;
+                    return provider.getVideos(mv.getId());
                 } catch (Exception e) {
                     Log.e(TAG, "Error: " + e.getMessage(), e);
                 }
@@ -73,7 +75,11 @@ public class MovieDetailsViewModel extends AndroidViewModel {
         task.execute(movie);
     }
 
-    public void loadReviews(@NonNull final Movie movie) {
+    /**
+     * This method is loading reviews or updating existing reviews from the next available page.
+     * @param movie a movie to be updated with reviews.
+     */
+    public void loadOrUpdateReviews(@NonNull final Movie movie) {
         AsyncTask<Movie, Void, Reviews> task = new AsyncTask<Movie, Void, Reviews>() {
             @Nullable
             @Override
@@ -116,7 +122,7 @@ public class MovieDetailsViewModel extends AndroidViewModel {
         task.execute(movie);
     }
 
-    public void loadFavoriteFlag(@NonNull final Movie movie) {
+    private void loadFavoriteFlag(@NonNull final Movie movie) {
         FavoriteMovieDao favoriteMovieDao = db.favoriteMovieDao();
         LiveData<List<FavoriteMovie>> favMovie = favoriteMovieDao.loadMovie(movie.getId());
         favMovie.observeForever(new Observer<List<FavoriteMovie>>() {
