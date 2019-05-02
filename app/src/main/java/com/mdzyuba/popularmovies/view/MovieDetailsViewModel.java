@@ -18,6 +18,7 @@ import com.mdzyuba.popularmovies.service.VideoCollectionProvider;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -46,8 +47,9 @@ public class MovieDetailsViewModel extends AndroidViewModel {
         db = MovieDatabase.getInstance(getApplication());
     }
 
-    public void loadVideos(final Movie movie) {
+    public void loadVideos(@NonNull final Movie movie) {
         AsyncTask<Movie, Void, VideosCollection> task = new AsyncTask<Movie, Void, VideosCollection>() {
+            @Nullable
             @Override
             protected VideosCollection doInBackground(Movie... movies) {
                 Movie mv = movies[0];
@@ -62,15 +64,18 @@ public class MovieDetailsViewModel extends AndroidViewModel {
             }
 
             @Override
-            protected void onPostExecute(VideosCollection videos) {
-                videosCollection.setValue(videos);
+            protected void onPostExecute(@Nullable VideosCollection videos) {
+                if (videos != null) {
+                    videosCollection.setValue(videos);
+                }
             }
         };
         task.execute(movie);
     }
 
-    public void loadReviews(final Movie movie) {
+    public void loadReviews(@NonNull final Movie movie) {
         AsyncTask<Movie, Void, Reviews> task = new AsyncTask<Movie, Void, Reviews>() {
+            @Nullable
             @Override
             protected Reviews doInBackground(Movie... movies) {
                 Movie mv = movies[0];
@@ -90,7 +95,7 @@ public class MovieDetailsViewModel extends AndroidViewModel {
                 return null;
             }
 
-            private int getNextPage(Movie mv) {
+            private int getNextPage(@NonNull Movie mv) {
                 int page = 1;
                 if (mv.getReviews() != null) {
                     Reviews movieReviews = mv.getReviews();
@@ -102,16 +107,18 @@ public class MovieDetailsViewModel extends AndroidViewModel {
             }
 
             @Override
-            protected void onPostExecute(Reviews revs) {
-                reviews.setValue(revs);
+            protected void onPostExecute(@Nullable Reviews revs) {
+                if (revs != null) {
+                    reviews.setValue(revs);
+                }
             }
         };
         task.execute(movie);
     }
 
-    public void loadFavoriteFlag(final Movie movie) {
+    public void loadFavoriteFlag(@NonNull final Movie movie) {
         FavoriteMovieDao favoriteMovieDao = db.favoriteMovieDao();
-        LiveData<List<FavoriteMovie>> favMovie = favoriteMovieDao.loadFavoriteMovie(movie.getId());
+        LiveData<List<FavoriteMovie>> favMovie = favoriteMovieDao.loadMovie(movie.getId());
         favMovie.observeForever(new Observer<List<FavoriteMovie>>() {
             @Override
             public void onChanged(List<FavoriteMovie> favoriteMovies) {
@@ -124,7 +131,7 @@ public class MovieDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    public void clearMovieFavoriteFlag(final Movie movie) {
+    public void clearMovieFavoriteFlag(@NonNull final Movie movie) {
         AsyncTask<Movie, Void, Void> deleteFavoriteMovie = new AsyncTask<Movie, Void, Void>() {
             @Override
             protected Void doInBackground(Movie... movies) {
@@ -137,7 +144,7 @@ public class MovieDetailsViewModel extends AndroidViewModel {
         deleteFavoriteMovie.execute(movie);
     }
 
-    public void markMovieAsFavorite(final Movie movie) {
+    public void markMovieAsFavorite(@NonNull final Movie movie) {
         AsyncTask<Movie, Void, Void> addFavoriteMovie = new AsyncTask<Movie, Void, Void>() {
             @Override
             protected Void doInBackground(Movie... movies) {

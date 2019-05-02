@@ -15,8 +15,12 @@ public class FavoriteMovie {
     @ColumnInfo(name = "movie_id")
     private int movieId;
 
+    @ColumnInfo(name = "time_ms")
+    private long insertTimeMs;
+
     public FavoriteMovie(int movieId) {
         this.movieId = movieId;
+        insertTimeMs = System.currentTimeMillis();
     }
 
     public int getMovieId() {
@@ -25,5 +29,13 @@ public class FavoriteMovie {
 
     public void setMovieId(int movieId) {
         this.movieId = movieId;
+    }
+
+    public long getInsertTimeMs() {
+        return insertTimeMs;
+    }
+
+    public void setInsertTimeMs(long insertTimeMs) {
+        this.insertTimeMs = insertTimeMs;
     }
 }

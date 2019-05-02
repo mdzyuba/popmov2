@@ -38,7 +38,7 @@ public class FavoriteMoviesProvider implements MoviesProvider {
                           MutableLiveData<Exception> dataLoadException) {
         MovieDatabase db = MovieDatabase.getInstance(context);
         FavoriteMovieDao favoriteMovieDao = db.favoriteMovieDao();
-        LiveData<List<Movie>> favMovies = favoriteMovieDao.loadAllFavoriteMovies();
+        LiveData<List<Movie>> favMovies = favoriteMovieDao.loadMovies();
         favMovies.observeForever(new Observer<List<Movie>>() {
             @Override
             public void onChanged(List<Movie> mv) {

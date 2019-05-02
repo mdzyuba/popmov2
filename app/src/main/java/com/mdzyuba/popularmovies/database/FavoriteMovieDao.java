@@ -15,11 +15,11 @@ import androidx.room.Update;
 
 @Dao
 public interface FavoriteMovieDao {
-    @Query("SELECT movie.* FROM favorite_movie inner join movie on favorite_movie.movie_id = movie.id")
-    LiveData<List<Movie>> loadAllFavoriteMovies();
+    @Query("SELECT movie.* FROM favorite_movie inner join movie on favorite_movie.movie_id = movie.id order by time_ms")
+    LiveData<List<Movie>> loadMovies();
 
     @Query("SELECT * FROM favorite_movie WHERE movie_id = :movieId")
-    LiveData<List<FavoriteMovie>> loadFavoriteMovie(int movieId);
+    LiveData<List<FavoriteMovie>> loadMovie(int movieId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(FavoriteMovie movie);
