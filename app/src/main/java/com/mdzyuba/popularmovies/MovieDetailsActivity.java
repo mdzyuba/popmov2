@@ -12,16 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mdzyuba.popularmovies.model.Movie;
 import com.mdzyuba.popularmovies.model.Reviews;
 import com.mdzyuba.popularmovies.model.Video;
 import com.mdzyuba.popularmovies.model.VideosCollection;
-import com.mdzyuba.popularmovies.view.MoviePosterImageUtil;
 import com.mdzyuba.popularmovies.view.MovieDetailsViewModel;
 import com.mdzyuba.popularmovies.view.MovieDetailsViewModelFactory;
+import com.mdzyuba.popularmovies.view.MoviePosterImageUtil;
 import com.mdzyuba.popularmovies.view.PicassoProvider;
 import com.mdzyuba.popularmovies.view.SharedViewModel;
 import com.mdzyuba.popularmovies.view.SharedViewModelFactory;
@@ -215,9 +214,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void initPosterImage() {
-        ImageView imageView = findViewById(R.id.iv_poster);
-        TextView title = findViewById(R.id.poster_title);
-        MoviePosterImageUtil.loadImage(picasso, movie, imageView, title);
+        ViewGroup parentView = findViewById(R.id.page_layout);
+        MoviePosterImageUtil.loadImage(picasso, movie, parentView);
     }
 
     private void initReleaseYear() {

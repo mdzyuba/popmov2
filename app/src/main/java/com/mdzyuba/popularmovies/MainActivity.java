@@ -34,6 +34,7 @@ import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int MIN_MOVIES_COUNT_FOR_LARGE_SCREEN = 30;
     private MovieAdapter movieAdapter;
     private ProgressBar progressBar;
     private MoviesGridViewModel viewModel;
@@ -67,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
         public void onChanged(List<Movie> movies) {
             Log.d(TAG, "Movie List changed. Updating the grid.");
             movieAdapter.updateMovies(movies);
+            // Load more movies if needed for the larger than a phone device screen size.
+            boolean largeGrid = getResources().getInteger(R.integer.grid_columns) > 4;
+            boolean notEnoughMovies = largeGrid && movies.size() < MIN_MOVIES_COUNT_FOR_LARGE_SCREEN;
+            if (viewModel.getMoviesSelection().getValue() != MoviesSelection.FAVORITE &&
+                notEnoughMovies && viewModel.canLoadMoreMovies()) {
+                viewModel.loadMovies();
+            }
         }
     };
 

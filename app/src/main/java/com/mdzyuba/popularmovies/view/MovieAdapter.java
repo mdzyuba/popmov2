@@ -1,14 +1,11 @@
 package com.mdzyuba.popularmovies.view;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.mdzyuba.popularmovies.R;
 import com.mdzyuba.popularmovies.model.Movie;
@@ -16,6 +13,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
@@ -27,14 +27,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     private final Picasso picasso;
 
-    private Context context;
-
     public interface MovieClickListener {
         void onMovieClick(Movie movie);
     }
 
     public MovieAdapter(Context context, @NonNull MovieClickListener movieClickListener) {
-        this.context = context;
         this.movieList = new ArrayList<>();
         this.movieClickListener = movieClickListener;
         this.picasso = PicassoProvider.getPicasso(context.getApplicationContext());
@@ -73,12 +70,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final ImageView imageView;
+        final View itemView;
 
         MovieViewHolder(View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.image);
+            this.itemView = itemView;
+            imageView = itemView.findViewById(R.id.iv_poster);
             imageView.setOnClickListener(this);
-
         }
 
         @Override
@@ -87,8 +85,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         }
 
         void bind(@NonNull Movie movie) {
-            TextView title = itemView.findViewById(R.id.title);
-            MoviePosterImageUtil.loadImage(picasso, movie, imageView, title);
+            MoviePosterImageUtil.loadImage(picasso, movie, itemView);
         }
     }
 }

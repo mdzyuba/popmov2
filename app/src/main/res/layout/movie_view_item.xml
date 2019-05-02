@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal">
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/iv_poster"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -15,7 +15,7 @@
         android:layout_margin="1dp" />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/poster_title"
         style="@style/LargePlaceholderTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,4 +26,9 @@
         android:gravity="center_horizontal"
         android:text="@string/not_available"
         android:textAlignment="center" />
+
+    <ProgressBar android:id="@+id/loading_progress"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_gravity="center" />
 </FrameLayout>
