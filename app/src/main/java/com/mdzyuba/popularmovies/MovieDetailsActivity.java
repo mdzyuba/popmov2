@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mdzyuba.popularmovies.model.Movie;
 import com.mdzyuba.popularmovies.model.Reviews;
@@ -29,6 +30,7 @@ import com.squareup.picasso.Picasso;
 import java.util.Calendar;
 import java.util.Date;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -110,10 +112,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             View.OnClickListener clickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Video trailer = (Video) view.getTag();
-                    Uri uri = Uri.parse(String.format(YOUTUBE, trailer.key));
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    MovieDetailsActivity.this.startActivity(intent);
+                    openMovieTrailerWebPage(view);
                 }
             };
 
@@ -130,6 +129,18 @@ public class MovieDetailsActivity extends AppCompatActivity {
             playButton.setTag(video);
             playButton.setOnClickListener(clickListener);
             trailersView.addView(trailerView);
+        }
+    }
+
+    private void openMovieTrailerWebPage(@NonNull View view) {
+        Video trailer = (Video) view.getTag();
+        Uri uri = Uri.parse(String.format(YOUTUBE, trailer.key));
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Log.w(TAG, "No Web browser available to perform the ACTION_VIEW.");
+            Toast.makeText(this, R.string.no_web_browser_available, Toast.LENGTH_LONG).show();
         }
     }
 

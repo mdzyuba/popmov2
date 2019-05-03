@@ -23,4 +23,5 @@
     <string name="show_more_reviews">Show more reviews</string>
     <string name="no_trailers_available">No trailers available</string>
     <string name="no_reviews_available">No reviews available</string>
+    <string name="no_web_browser_available">No Web browser available to display the movie trailer.</string>
 </resources>
