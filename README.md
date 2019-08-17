@@ -1,13 +1,15 @@
+# Popular Movies Android Application
+
 This Android application is a part of the Developing Android Apps
 course on Udacity. This project provides information for movies.
 The application retrieves moves from IMDB database for two categories:
 Most Popular and Top Movies.
 
-The user can mark the movies as favorites. The application stores user's 
-selected movies to a local DB. The user can sort movies by the favorite
-flag. 
+The user can mark the movies as favorite. The application stores user's 
+selected movies to a local DB. The user can browse favorite movies as
+well as top and popular movies.
 
-The application provides links to movie trailers and shows user's 
+The application provides links to movie trailers and shows users' 
 reviews.
 
 ## Purpose of the Project
