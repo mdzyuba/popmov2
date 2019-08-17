@@ -1,8 +1,8 @@
-# Popular Movies Android Application
+# Popular Movies Android Application (Part 2)
 
-This Android application is a part of the Developing Android Apps
-course on Udacity. This project provides information for movies.
-The application retrieves moves from IMDB database for two categories:
+This Android application is the final project for the Developing Android Apps
+course on [Udacity](http://www.udacity.com/). This project provides information for movies.
+The application retrieves moves from [IMDB](https://www.imdb.com/) database for two categories:
 Most Popular and Top Movies.
 
 The user can mark the movies as favorite. The application stores user's 
